@@ -4,22 +4,22 @@ class MessagesController < ApplicationController
   def index
     @messages = Messages.all
 
-    render json: MessagesSerializer.new(messages).serialized_json, status: :ok
+    render json: ActiveModelSerializers::SerializableResource.new(messages)
   end
 
   def show
     if @message.viewed
-
       @message.destroy
-      render json: 'You already requested this message'.to_json, status: :no_content
+      render json: { error: 'You already requested this message' }
+      return
     end
 
     @message.update(viewed: true)
-    render json: MessagesSerializer.new(@message).serialized_json, status: :ok
+    render json: ActiveModelSerializers::SerializableResource.new(@message)
   end
 
   def create
-    @message = Message.creare(message_params)
+    @message = Message.create(message_params)
 
     if @message.save
       render json: 'message was successfully created'.to_json, status: :created
@@ -35,7 +35,7 @@ class MessagesController < ApplicationController
   end
 
   def message_params
-    params.require(:message).permit(:body)
+    params.require(:message).permit(:message, :viewed)
   end
 
 end

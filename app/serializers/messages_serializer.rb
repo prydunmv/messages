@@ -1,3 +1,3 @@
 class MessagesSerializer < ActiveModel::Serializer
-  attributes :id :body :viewed
+  attributes :message,:viewed
 end

@@ -2,9 +2,9 @@ class MessagesController < ApplicationController
   before_action :message, only: %i[show]
 
   def index
-    @messages = Messages.all
+    @messages = Message.where(viewed: false)
 
-    render json: ActiveModelSerializers::SerializableResource.new(messages)
+    render json: ActiveModelSerializers::SerializableResource.new(@messages.to_a).to_json
   end
 
   def show
@@ -35,7 +35,7 @@ class MessagesController < ApplicationController
   end
 
   def message_params
-    params.require(:message).permit(:message, :viewed)
+    params.fetch(:message, {}).permit(:message, :viewed)
   end
 
 end
